@@ -1,6 +1,6 @@
 ---
 title: "upset plot"
-output: html_document
+output: pdf_document
 date: "2024-12-12"
 editor_options: 
   chunk_output_type: console
@@ -10,6 +10,8 @@ editor_options:
 # install.packages("msigdbr")
 library(msigdbr)
 library(dplyr)
+library(gofigR)
+enable(TRUE)
 
 h_gene_sets<-  msigdbr(species = "human", category = "H")
 
@@ -49,48 +51,53 @@ library(ComplexHeatmap)
 m<-  make_comb_mat(gene_sub)
 m
 
-UpSet(m)
+publish(UpSet(m), "Default UpSet")
 
-UpSet(m, comb_order = order(-comb_size(m)))
+publish(UpSet(m, comb_order = order(-comb_size(m))), "UpSet with custom order")
 ```
 
 
 ```{r}
-UpSet(m, left_annotation = upset_left_annotation(m), 
-      comb_order = order(comb_size(m)))
+publish(UpSet(m, left_annotation = upset_left_annotation(m), 
+      comb_order = order(comb_size(m))),
+      "UpSet with custom order and left annotations")
 ```
 
 add numbers on the bar 
 ```{r}
-UpSet(m, left_annotation = upset_left_annotation(m), 
+publish(UpSet(m, left_annotation = upset_left_annotation(m), 
       top_annotation = upset_top_annotation(m, add_numbers = TRUE),
-      comb_order = order(comb_size(m)))
+      comb_order = order(comb_size(m))),
+      "UpSet with custom order and right annotations")
 ```
 
 change set order 
 ```{r}
-UpSet(m, 
+publish(UpSet(m, 
       left_annotation = upset_left_annotation(m), 
       top_annotation = upset_top_annotation(m, add_numbers = TRUE),
       set_order = c("E2F_TARGETS","G2M_CHECKPOINT","ESTROGEN_RESPONSE_EARLY",
                     "ESTROGEN_RESPONSE_LATE", "EPITHELIAL_MESENCHYMAL_TRANSITION"),
-      comb_order = order(comb_size(m)))
+      comb_order = order(comb_size(m))),
+      "UpSet with custom set order")
 ```
 
 ```{r}
-UpSet(m, 
+publish(UpSet(m, 
       left_annotation = upset_left_annotation(m), 
       top_annotation = upset_top_annotation(m, add_numbers = TRUE),
       set_order = c("E2F_TARGETS","G2M_CHECKPOINT","ESTROGEN_RESPONSE_EARLY",
                     "ESTROGEN_RESPONSE_LATE", "EPITHELIAL_MESENCHYMAL_TRANSITION"),
-      comb_order = order(-comb_size(m)))
+      comb_order = order(-comb_size(m))),
+      "UpSet with reverse comb order")
 ```
 
 Change the rowname size 
 
 ```{r}
-UpSet(m, left_annotation = upset_left_annotation(m), 
+publish(UpSet(m, left_annotation = upset_left_annotation(m), 
       top_annotation = upset_top_annotation(m, add_numbers = TRUE),
       comb_order = order(comb_size(m)),
-      row_names_gp = gpar(fontsize = 8))
+      row_names_gp = gpar(fontsize = 8)),
+      "UpSet with row names")
 ```
