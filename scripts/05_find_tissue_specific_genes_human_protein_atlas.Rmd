@@ -14,6 +14,8 @@ http://www.bioconductor.org/packages/devel/bioc/vignettes/HPAanalyze/inst/doc/b_
 #BiocManager::install("HPAanalyze")
 library(tidyverse)
 library(HPAanalyze)
+library(gofigR)
+enable(TRUE)
 ```
 
 Most of the time, you will only need the “histology” datasets, which contain normal_tissue, pathology (basically cancers) and subcellular_location.

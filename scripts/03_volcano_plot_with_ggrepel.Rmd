@@ -20,6 +20,8 @@ library(readr)
 library(here)
 library(DESeq2)
 library(ggplot2)
+library(gofigR)
+enable(TRUE)
 
 raw_counts<- read_tsv(here("data/raw_counts.tsv"))
 
@@ -67,10 +69,12 @@ y-axis is -log10(p-value)
 
 
 ```{r}
-res %>% 
+p <- res %>% 
   as.data.frame() %>%
   ggplot(aes(x = log2FoldChange, y = -log10(pvalue))) +
   geom_point()
+  
+p %>% publish(figure_name="Volcano plot")
   
 ```
 
@@ -86,11 +90,11 @@ res %>%
 A basic volcano plot
 
 ```{r}
-res %>% 
+(res %>% 
   as.data.frame() %>%
   ggplot(aes(x = log2FoldChange, y = -log10(pvalue))) +
   geom_point() +
-  theme_bw(base_size = 14)
+  theme_bw(base_size = 14)) %>% publish("Volcano plot")
 ```
 
 How to label the genes?
@@ -112,12 +116,12 @@ res_sig<- res %>%
   filter(abs(log2FoldChange)>=4, padj <= 0.001) 
   
 
-res %>% 
+(res %>% 
   as.data.frame() %>%
   ggplot(aes(x = log2FoldChange, y = -log10(pvalue))) +
   geom_point() +
   geom_label(data = res_sig, aes(label = gene))+
-  theme_bw(base_size = 14)
+  theme_bw(base_size = 14)) %>% publish("Volcano plot with gene names")
 ```
 
 
@@ -127,12 +131,13 @@ the labels are overlapping, let's improve by ggrepel
 library(ggrepel )
 
 
-res %>% 
+p <- res %>% 
   as.data.frame() %>%
   ggplot(aes(x = log2FoldChange, y = -log10(pvalue))) +
   geom_point() +
   ggrepel::geom_label_repel(data = res_sig, aes(label = gene))+
   theme_bw(base_size = 14)
+p %>% publish("ggrepel")
 ```
 
 
@@ -150,32 +155,35 @@ res2<- res %>%
   
 head(res2)
 
-ggplot(res2, aes(x = log2FoldChange, y = -log10(pvalue))) +
+p <- ggplot(res2, aes(x = log2FoldChange, y = -log10(pvalue))) +
   geom_point(aes(color = sig)) +
   ggrepel::geom_label_repel(data = res_sig, aes(label = gene))+
   theme_bw(base_size = 14)
+p %>% publish("With colors")
 ```
 
 
 fix the color of the points 
 
 ```{r}
-ggplot(res2, aes(x = log2FoldChange, y = -log10(pvalue))) +
+p <- ggplot(res2, aes(x = log2FoldChange, y = -log10(pvalue))) +
   geom_point(aes(color = sig)) +
   scale_color_manual(values = c("blue", "red")) +
   ggrepel::geom_label_repel(data = res_sig, aes(label = gene))+
   theme_bw(base_size = 14)
+p %>% publish("Manual colors")
 ```
 
 add horizontal and vertical lines
 ```{r}
-ggplot(res2, aes(x = log2FoldChange, y = -log10(pvalue))) +
+p <- ggplot(res2, aes(x = log2FoldChange, y = -log10(pvalue))) +
   geom_point(aes(color = sig)) +
   scale_color_manual(values = c("blue", "red")) +
   ggrepel::geom_label_repel(data = res_sig, aes(label = gene))+
   geom_hline(yintercept = 100, linetype = 2, color = "red") +
   geom_vline(xintercept = c(-4, 4), linetype = 2, color = "red")+
   theme_bw(base_size = 14)
+p %>% publish("Colors + lines")
 ```
 
 Enhanced volcanoplot: https://bioconductor.org/packages/devel/bioc/vignettes/EnhancedVolcano/inst/doc/EnhancedVolcano.html

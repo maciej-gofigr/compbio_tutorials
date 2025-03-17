@@ -38,6 +38,8 @@ library(dplyr)
 library(readr)
 library(here)
 library(DESeq2)
+library(gofigR)
+enable(TRUE)
 
 raw_counts<- read_tsv(here("data/raw_counts.tsv"))
 
@@ -92,7 +94,7 @@ significant_genes
 ```{r}
 vsd <- vst(dds, blind=FALSE)
 
-plotPCA(vsd, intgroup=c("condition"))
+publish(plotPCA(vsd, intgroup=c("condition")), "PCA")
 ```
 
 
@@ -116,10 +118,10 @@ PC1_and_PC2<- data.frame(PC1=pca_prcomp$x[,1], PC2= pca_prcomp$x[,2],
 ## plot PCA plot
 library(ggplot2)
 
-ggplot(PC1_and_PC2, aes(x=PC1, y=PC2, col=type)) + 
+publish(ggplot(PC1_and_PC2, aes(x=PC1, y=PC2, col=type)) + 
   geom_point() + 
   geom_text(aes(label = type), hjust=0, vjust=0) +
-  coord_fixed()
+  coord_fixed(), "PCA with ggplot")
 ```
 
 It is not exactly the same, what's going on? 
@@ -140,7 +142,7 @@ library(ComplexHeatmap)
 
 significant_mat<- normalized_counts[significant_genes, ] 
 
-Heatmap(t(scale(t(significant_mat))))
+publish(Heatmap(t(scale(t(significant_mat)))), "Heatmap of significant genes")
 
 ```
 
@@ -155,19 +157,21 @@ col_anno <- HeatmapAnnotation(df = coldata,
                              col = list( condition = c("hypoxia" = "red", "normoxia" = "blue")))
 
 
-Heatmap(t(scale(t(significant_mat))), 
+publish(Heatmap(t(scale(t(significant_mat))), 
         top_annotation = col_anno,
         show_row_names = FALSE,
-        name = "scaled normalized\nexpression")
+        name = "scaled normalized\nexpression"), 
+        "Heatmap of scaled & normalized expression")
 ```
 
 why scaling is important?
 
 
 ```{r}
-Heatmap(significant_mat, 
+publish(Heatmap(significant_mat, 
         top_annotation = col_anno,
         show_row_names = FALSE,
-        name = "scaled normalized\nexpression")
+        name = "scaled normalized\nexpression"),
+        "Heatmap of scaled & normalized expression (no scaling)")
 ```
 

@@ -12,6 +12,8 @@ Let's use k-means clustering
 # install the package if you do not have it.
 # install.packages("ISLR")
 library(ISLR)
+library(gofigR)
+enable()
 
 ncidat<- t(NCI60$data)
 colnames(ncidat)<- NCI60$labs
@@ -49,9 +51,10 @@ pc_dat<- data.frame(type = rownames(Z), PC1 = Z[,1], PC2= Z[,2])
 
 library(ggplot2)
 
-ggplot(pc_dat,aes(x=PC1, y=PC2, col=type)) + 
+p <- ggplot(pc_dat,aes(x=PC1, y=PC2, col=type)) + 
   geom_point() +
   theme_classic(base_size = 14)
+publish(p)
 ```
 
 ### K-means on the raw data 
@@ -101,12 +104,13 @@ length(km$cluster)
 
 visualize it with a heatmap 
 ```{r}
+library(tidyverse)
 km$cluster %>% 
   tibble::enframe() %>%
   janitor::tabyl(name, value) %>%
   tibble::column_to_rownames(var="name") %>%
   as.matrix() %>%
-  Heatmap(cluster_columns = FALSE)
+  Heatmap(cluster_columns = FALSE) %>% publish("Visualizing clusters with a heatmap")
 ```
 
 Centers Matrix:
@@ -127,14 +131,16 @@ dim(cens)
 overlay K-means result on the PCA plot.
 
 ```{r}
-par(mfrow=c(1,1))
+publish_base({
+  par(mfrow=c(1,1))
 
-plot(Z[,1],Z[,2],col=km$cluster,type="n")
-
-text(Z[,1],Z[,2],colnames(ncidat),cex=.75,col=km$cluster)
-
-
-points(cens%*%V[,1],cens%*%V[,2],col=1:K,pch=16,cex=3)
+  plot(Z[,1],Z[,2],col=km$cluster,type="n")
+  
+  text(Z[,1],Z[,2],colnames(ncidat),cex=.75,col=km$cluster)
+  
+  
+  points(cens%*%V[,1],cens%*%V[,2],col=1:K,pch=16,cex=3)
+})
 ```
 
 ### K-means on the PCA space
@@ -149,7 +155,7 @@ km2$cluster %>%
   janitor::tabyl(name, value) %>%
   tibble::column_to_rownames(var="name") %>%
   as.matrix() %>%
-  Heatmap(cluster_columns = FALSE)
+  Heatmap(cluster_columns = FALSE) %>% publish("k-means in the PCA space")
 ```
 
 

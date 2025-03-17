@@ -31,6 +31,8 @@ library(readr)
 library(harmony)
 library(scCustomize)
 library(SeuratDisk)
+library(gofigR)
+enable(TRUE)
 ```
 
 read in the count matrix 
@@ -115,6 +117,6 @@ merged_seurat<- merged_seurat %>%
 ### visualization
 
 ```{r}
-DimPlot_scCustom(seurat_object = merged_seurat)
+DimPlot_scCustom(seurat_object = merged_seurat) %>% publish("Seurat UMAP plot")
 
 ```

@@ -15,6 +15,11 @@ Making heatmap is an essential skill for any computational biologist.
 
 ```{r}
 library(ComplexHeatmap)
+library(gofigR)
+enable(FALSE)
+
+hm <- Heatmap(mat, cluster_columns = FALSE)
+publish(hm)
 ```
 
 ### make dummy data 
@@ -36,20 +41,22 @@ mat
 visualize the data 
 
 ```{r}
-par(mfrow =c(1,1), mar=c(4,4,1,1))
-plot(1:8,rep(0,8), ylim=c(0,35), pch="", xlab="Time", ylab="Gene Expression")
-
-for (i in 1:nrow(mat)) {
-lines(1:8,mat[i,], lwd=3, col=i)
-}
-
-legend(1,35,rownames(mat), 1:4, cex=0.7)
+publish_base({
+  par(mfrow =c(1,1), mar=c(4,4,1,1))
+  plot(1:8,rep(0,8), ylim=c(0,35), pch="", xlab="Time", ylab="Gene Expression")
+  
+  for (i in 1:nrow(mat)) {
+  lines(1:8,mat[i,], lwd=3, col=i)
+  }
+  
+  legend(1,35,rownames(mat), 1:4, cex=0.7)
+}, "Gene Expression")
 ```
 
 ### Making a heatmap is easy!
 
 ```{r}
-Heatmap(mat, cluster_columns = FALSE)
+publish(Heatmap(mat, cluster_columns = FALSE))
 
 quantile(mat, c(0, 0.1,0.5, 0.9))
 ```
@@ -60,7 +67,7 @@ change color mapping
 ```{r}
 col_fun<- circlize::colorRamp2(c(0, 3, 20), c("blue", "white", "red"))
 
-Heatmap(mat, cluster_columns = FALSE, col = col_fun)
+publish(Heatmap(mat, cluster_columns = FALSE, col = col_fun))
 ```
 
 
@@ -70,9 +77,9 @@ outlier
 mat2<- mat
 mat2[1,1]<- 1000
 
-Heatmap(mat2, cluster_columns = FALSE)
+publish(Heatmap(mat2, cluster_columns = FALSE))
 
-Heatmap(mat2, cluster_columns = FALSE, col = col_fun)
+publish(Heatmap(mat2, cluster_columns = FALSE, col = col_fun))
 
 ```
 
@@ -83,7 +90,7 @@ scaled_mat<- t(scale(t(mat)))
 
 
 ?Heatmap
-Heatmap(scaled_mat, cluster_columns = FALSE)
+publish(Heatmap(scaled_mat, cluster_columns = FALSE))
 ```
 
 Note, after scaling, h1 and l1 are close to each other!
@@ -107,7 +114,7 @@ d
 hclust(d)
 
 
-plot(hclust(d))
+publish_base(plot(hclust(d)))
 ```
 
 
@@ -116,7 +123,7 @@ After scaling
 
 d2<- dist(scaled_mat)
 
-plot(hclust(d2))
+publish_base(plot(hclust(d2)))
 ```
 
 Key takeaways:
